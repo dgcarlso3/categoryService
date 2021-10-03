@@ -16,13 +16,13 @@ public class CategoryService {
     }
 
     public String addNewCategory (String name, String parentName) {
-//        Category category = new Category(name);
-//        categoryRepository.save(n);
+        Category category = new Category(name);
+        categoryRepository.save(category);
         return "Saved";
     }
 
-    public List<Category> getAllCategories() {
-        return null;
+    public Iterable<Category> getAllCategories() {
+        return categoryRepository.findAll();
     }
 
 }
