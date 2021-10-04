@@ -23,7 +23,7 @@ public class CategoryControllerTest {
     private MockMvc mvc;
 
     @MockBean
-    CategoryService mockCategoryService;
+    CategoryService categoryService;
 
     @Test
     public void addCategory_returnsOk() throws Exception {
@@ -35,7 +35,7 @@ public class CategoryControllerTest {
 
     @Test
     public void addCategory_returnsResponseFromServiceLayer() throws Exception {
-        Mockito.when(mockCategoryService.addNewCategory("foo", "bar")).thenReturn("Floof");
+        Mockito.when(categoryService.addNewCategory("foo", "bar")).thenReturn("Floof");
         mvc.perform(MockMvcRequestBuilders.post("/categories/add")
                         .param("name", "foo")
                         .param("parentName", "bar"))
@@ -48,7 +48,7 @@ public class CategoryControllerTest {
                         .param("name", "This name")
                         .param("parentName", "This parent"));
 
-        Mockito.verify(mockCategoryService).addNewCategory("This name", "This parent");
+        Mockito.verify(categoryService).addNewCategory("This name", "This parent");
     }
 
     @Test
@@ -61,7 +61,7 @@ public class CategoryControllerTest {
     public void getAllCategories_callsService() throws Exception {
         mvc.perform(MockMvcRequestBuilders.get("/categories"));
 
-        Mockito.verify(mockCategoryService).getAllCategories();
+        Mockito.verify(categoryService).getAllCategories();
     }
 
     @Test
@@ -69,7 +69,7 @@ public class CategoryControllerTest {
         List<Category> theList = new ArrayList<>();
         theList.add(new Category("name1"));
         theList.add(new Category("name2"));
-        Mockito.when(mockCategoryService.getAllCategories()).thenReturn(theList);
+        Mockito.when(categoryService.getAllCategories()).thenReturn(theList);
 
         mvc.perform(MockMvcRequestBuilders.get("/categories"))
                 .andExpect(jsonPath("$[*].name").value(containsInAnyOrder("name1", "name2")));
@@ -85,13 +85,13 @@ public class CategoryControllerTest {
     public void getCategoryByName_callsService() throws Exception {
         mvc.perform(MockMvcRequestBuilders.get("/categories/foo"));
 
-        Mockito.verify(mockCategoryService).getCategoryByName("foo");
+        Mockito.verify(categoryService).getCategoryByName("foo");
     }
 
     @Test
     public void getCategoryByName_returnsCorrectData() throws Exception {
         Category expected = new Category("foof");
-        Mockito.when(mockCategoryService.getCategoryByName("foo")).thenReturn(expected);
+        Mockito.when(categoryService.getCategoryByName("foo")).thenReturn(expected);
 
         mvc.perform(MockMvcRequestBuilders.get("/categories/foo"))
                 .andExpect(jsonPath("$.name").value(containsString("foof")));
@@ -104,9 +104,16 @@ public class CategoryControllerTest {
     }
 
     @Test
+    public void addProductToCategory_returnsResponseFromServiceLayer() throws Exception {
+        Mockito.when(categoryService.addProductToCategory(42, 24)).thenReturn("Floof");
+        mvc.perform(MockMvcRequestBuilders.put("/categories/42/products/24"))
+                .andExpect(content().string(equalTo("Floof")));
+    }
+
+    @Test
     public void addProductToCategory_callsService() throws Exception {
         mvc.perform(MockMvcRequestBuilders.put("/categories/42/products/24"));
 
-        Mockito.verify(mockCategoryService).addProductToCategory(42, 24);
+        Mockito.verify(categoryService).addProductToCategory(42, 24);
     }
 }

@@ -1,10 +1,9 @@
 package com.carlson.categoryService;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
-@Controller
+@RestController
 @RequestMapping(path="/categories")
 public class CategoryController {
     private CategoryService categoryService;
@@ -30,7 +29,7 @@ public class CategoryController {
     }
 
     @PutMapping(path="/{categoryId}/products/{productId}")
-    public void addProductToCategory(@PathVariable Integer categoryId, @PathVariable Integer productId) {
-        categoryService.addProductToCategory(categoryId, productId);
+    public @ResponseBody String addProductToCategory(@PathVariable Integer categoryId, @PathVariable Integer productId) {
+        return categoryService.addProductToCategory(categoryId, productId);
     }
 }
