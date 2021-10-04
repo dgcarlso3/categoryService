@@ -20,8 +20,13 @@ public class CategoryController {
         return "Saved";
     }
 
-    @GetMapping(path="/all")
+    @GetMapping(path="")
     public @ResponseBody Iterable<Category> getAllCategories() {
         return categoryService.getAllCategories();
+    }
+
+    @GetMapping(path="/{name}")
+    public @ResponseBody Category getCategoryByName(@PathVariable String name) {
+        return categoryService.getCategoryByName(name);
     }
 }

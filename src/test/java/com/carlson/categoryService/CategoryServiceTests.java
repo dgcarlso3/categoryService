@@ -4,6 +4,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Mockito;
+import org.mockito.Spy;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 
@@ -17,6 +18,7 @@ public class CategoryServiceTests {
     @MockBean
     CategoryRepository mockCategoryRepository;
 
+    @Spy
     private CategoryService service;
 
     @BeforeEach
@@ -40,6 +42,9 @@ public class CategoryServiceTests {
 
     @Test
     public void addNewCategory_savesObjectWithCorrectParams() {
+        Category parent = new Category("the parent");
+        parent.setId(42);
+        Mockito.when(service.getCategoryByName("the parent")).thenReturn(parent);
         service.addNewCategory("the name", "the parent");
 
         ArgumentCaptor<Category> captor = ArgumentCaptor.forClass(Category.class);
@@ -47,6 +52,7 @@ public class CategoryServiceTests {
 
         Category result = captor.getValue();
         assertEquals("the name", result.getName());
+        assertEquals(result.getParent().getId(), 42);
     }
 
     @Test
@@ -64,4 +70,19 @@ public class CategoryServiceTests {
         Iterable<Category> result = service.getAllCategories();
         assertEquals(expected, result);
     }
-}
+
+    @Test
+    public void getCategoryByName_callsRepositoryWithParameter() {
+        service.getCategoryByName("foo");
+
+        Mockito.verify(mockCategoryRepository).findByName("foo");
+    }
+
+    @Test
+    public void getCategoryByName_returnsRepositoryResults() {
+        Category expected = new Category("foo");
+        Mockito.when(mockCategoryRepository.findByName("foo")).thenReturn(expected);
+
+        Category result = service.getCategoryByName("foo");
+        assertEquals(expected, result);
+    }}

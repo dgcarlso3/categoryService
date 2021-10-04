@@ -12,8 +12,7 @@ import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import java.util.ArrayList;
 import java.util.List;
 
-import static org.hamcrest.Matchers.containsInAnyOrder;
-import static org.hamcrest.Matchers.equalTo;
+import static org.hamcrest.Matchers.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 
@@ -53,13 +52,13 @@ public class CategoryControllerTest {
 
     @Test
     public void getAllCategories_returnsOk() throws Exception {
-        mvc.perform(MockMvcRequestBuilders.get("/categories/all"))
+        mvc.perform(MockMvcRequestBuilders.get("/categories"))
                 .andExpect(status().isOk());
     }
 
     @Test
     public void getAllCategories_callsService() throws Exception {
-        mvc.perform(MockMvcRequestBuilders.get("/categories/all"));
+        mvc.perform(MockMvcRequestBuilders.get("/categories"));
 
         Mockito.verify(mockCategoryService).getAllCategories();
     }
@@ -71,7 +70,29 @@ public class CategoryControllerTest {
         theList.add(new Category("name2"));
         Mockito.when(mockCategoryService.getAllCategories()).thenReturn(theList);
 
-        mvc.perform(MockMvcRequestBuilders.get("/categories/all"))
+        mvc.perform(MockMvcRequestBuilders.get("/categories"))
                 .andExpect(jsonPath("$[*].name").value(containsInAnyOrder("name1", "name2")));
+    }
+
+    @Test
+    public void getCategoryByName_returnsOk() throws Exception {
+        mvc.perform(MockMvcRequestBuilders.get("/categories/foo"))
+                .andExpect(status().isOk());
+    }
+
+    @Test
+    public void getCategoryByName_callsService() throws Exception {
+        mvc.perform(MockMvcRequestBuilders.get("/categories/foo"));
+
+        Mockito.verify(mockCategoryService).getCategoryByName("foo");
+    }
+
+    @Test
+    public void getCategoryByName_returnsCorrectData() throws Exception {
+        Category expected = new Category("foof");
+        Mockito.when(mockCategoryService.getCategoryByName("foo")).thenReturn(expected);
+
+        mvc.perform(MockMvcRequestBuilders.get("/categories/foo"))
+                .andExpect(jsonPath("$.name").value(containsString("foof")));
     }
 }
