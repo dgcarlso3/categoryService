@@ -28,4 +28,9 @@ public class CategoryController {
     public @ResponseBody Category getCategoryByName(@PathVariable String name) {
         return categoryService.getCategoryByName(name);
     }
+
+    @PutMapping(path="/{categoryId}/products/{productId}")
+    public void addProductToCategory(@PathVariable Integer categoryId, @PathVariable Integer productId) {
+        categoryService.addProductToCategory(categoryId, productId);
+    }
 }

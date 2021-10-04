@@ -7,12 +7,14 @@ import org.springframework.stereotype.Service;
 public class CategoryService {
 
     private CategoryRepository categoryRepository;
+    private CategoryProductRepository categoryProductRepository;
 
     public CategoryService() {}
 
     @Autowired
-    public CategoryService(CategoryRepository categoryRepository) {
+    public CategoryService(CategoryRepository categoryRepository, CategoryProductRepository categoryProductRepository) {
         this.categoryRepository = categoryRepository;
+        this.categoryProductRepository = categoryProductRepository;
     }
 
     public String addNewCategory (String name, String parentName) {
@@ -29,6 +31,14 @@ public class CategoryService {
 
     public Category getCategoryByName(String name) {
         return categoryRepository.findByName(name);
+    }
+
+    public String addProductToCategory(Integer categoryId, Integer productId) {
+        CategoryProduct categoryProduct = new CategoryProduct();
+        categoryProduct.setCategoryId(categoryId);
+        categoryProduct.setProductId(productId);
+        categoryProductRepository.save(categoryProduct);
+        return "Added";
     }
 
 }

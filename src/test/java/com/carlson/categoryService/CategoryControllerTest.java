@@ -96,4 +96,17 @@ public class CategoryControllerTest {
         mvc.perform(MockMvcRequestBuilders.get("/categories/foo"))
                 .andExpect(jsonPath("$.name").value(containsString("foof")));
     }
+
+    @Test
+    public void addProductToCategory_returnsOk() throws Exception {
+        mvc.perform(MockMvcRequestBuilders.put("/categories/42/products/24"))
+                .andExpect(status().isOk());
+    }
+
+    @Test
+    public void addProductToCategory_callsService() throws Exception {
+        mvc.perform(MockMvcRequestBuilders.put("/categories/42/products/24"));
+
+        Mockito.verify(mockCategoryService).addProductToCategory(42, 24);
+    }
 }
