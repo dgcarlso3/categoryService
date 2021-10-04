@@ -16,8 +16,7 @@ public class CategoryController {
 
     @PostMapping(path="/add")
     public @ResponseBody String addNewCategory (@RequestParam String name, @RequestParam String parentName) {
-        categoryService.addNewCategory(name, parentName);
-        return "Saved";
+        return categoryService.addNewCategory(name, parentName);
     }
 
     @GetMapping(path="")

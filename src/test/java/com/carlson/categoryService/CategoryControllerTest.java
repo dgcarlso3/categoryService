@@ -34,11 +34,12 @@ public class CategoryControllerTest {
     }
 
     @Test
-    public void addCategory_returnsCorrectResponse() throws Exception {
+    public void addCategory_returnsResponseFromServiceLayer() throws Exception {
+        Mockito.when(mockCategoryService.addNewCategory("foo", "bar")).thenReturn("Floof");
         mvc.perform(MockMvcRequestBuilders.post("/categories/add")
-                        .param("name", "")
-                        .param("parentName", ""))
-                .andExpect(content().string(equalTo("Saved")));
+                        .param("name", "foo")
+                        .param("parentName", "bar"))
+                .andExpect(content().string(equalTo("Floof")));
     }
 
     @Test
