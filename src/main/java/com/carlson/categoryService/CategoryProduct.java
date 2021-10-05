@@ -7,8 +7,8 @@ public class CategoryProduct {
     @Id
     @GeneratedValue(strategy=GenerationType.AUTO)
     private Integer id;
-    private Integer productId;
-    private Integer categoryId;
+    private Integer productid;
+    private Integer categoryid;
 
     public Integer getId() {
         return id;
@@ -18,19 +18,19 @@ public class CategoryProduct {
         this.id = id;
     }
 
-    public Integer getProductId() {
-        return productId;
+    public Integer getProductid() {
+        return productid;
     }
 
-    public void setProductId(Integer productId) {
-        this.productId = productId;
+    public void setProductid(Integer productid) {
+        this.productid = productid;
     }
 
     public Integer getCategoryId() {
-        return categoryId;
+        return categoryid;
     }
 
     public void setCategoryId(Integer categoryId) {
-        this.categoryId = categoryId;
+        this.categoryid = categoryId;
     }
 }

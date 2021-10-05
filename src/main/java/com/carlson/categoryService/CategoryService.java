@@ -36,7 +36,7 @@ public class CategoryService {
     public String addProductToCategory(Integer categoryId, Integer productId) {
         CategoryProduct categoryProduct = new CategoryProduct();
         categoryProduct.setCategoryId(categoryId);
-        categoryProduct.setProductId(productId);
+        categoryProduct.setProductid(productId);
         categoryProductRepository.save(categoryProduct);
         return "Added";
     }

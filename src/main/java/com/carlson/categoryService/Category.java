@@ -1,6 +1,7 @@
 package com.carlson.categoryService;
 
 import javax.persistence.*;
+import java.util.List;
 
 @Entity
 public class Category {
@@ -11,6 +12,10 @@ public class Category {
 
     @ManyToOne
     private Category parent;
+
+    @OneToMany
+    @JoinColumn(name="categoryid")
+    private List<CategoryProduct> categoryProducts;
 
     public Category() {}
     public Category(String name) {
@@ -41,4 +46,11 @@ public class Category {
         this.parent = parent;
     }
 
+    public List<CategoryProduct> getCategoryProducts() {
+        return categoryProducts;
+    }
+
+    public void setCategoryProducts(List<CategoryProduct> categoryProducts) {
+        this.categoryProducts = categoryProducts;
+    }
 }
