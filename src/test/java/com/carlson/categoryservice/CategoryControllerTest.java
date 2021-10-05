@@ -1,4 +1,4 @@
-package com.carlson.categoryService;
+package com.carlson.categoryservice;
 
 
 import org.junit.jupiter.api.Test;
