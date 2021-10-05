@@ -18,11 +18,11 @@ public class CategoryProduct {
         this.id = id;
     }
 
-    public Integer getProductid() {
+    public Integer getProductId() {
         return productid;
     }
 
-    public void setProductid(Integer productid) {
+    public void setProductId(Integer productid) {
         this.productid = productid;
     }
 
