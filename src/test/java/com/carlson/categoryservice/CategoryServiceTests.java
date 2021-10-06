@@ -1,5 +1,6 @@
 package com.carlson.categoryservice;
 
+import com.carlson.categoryservice.webservices.WebServiceHelper;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentCaptor;
@@ -10,7 +11,9 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 
 import java.util.ArrayList;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.when;
 
 @SpringBootTest
 public class CategoryServiceTests {
@@ -21,12 +24,17 @@ public class CategoryServiceTests {
     @MockBean
     CategoryProductRepository categoryProductRepository;
 
+    @MockBean
+    WebServiceHelper webServiceHelper;
+
     @Spy
     private CategoryService service;
 
     @BeforeEach
     public void beforeEach() {
-        service = new CategoryService(categoryRepository, categoryProductRepository);
+        when(categoryRepository.existsById(any())).thenReturn(true);
+        when(webServiceHelper.getProductExists(any())).thenReturn(true);
+        service = new CategoryService(categoryRepository, categoryProductRepository, webServiceHelper);
     }
 
     @Test
@@ -47,7 +55,7 @@ public class CategoryServiceTests {
     public void addNewCategory_savesObjectWithCorrectParams() {
         Category parent = new Category("the parent");
         parent.setId(42);
-        Mockito.when(service.getCategoryByName("the parent")).thenReturn(parent);
+        when(service.getCategoryByName("the parent")).thenReturn(parent);
         service.addNewCategory("the name", "the parent");
 
         ArgumentCaptor<Category> captor = ArgumentCaptor.forClass(Category.class);
@@ -68,7 +76,7 @@ public class CategoryServiceTests {
     @Test
     public void getAllCategories_returnsRepositoryResults() {
         Iterable<Category> expected = new ArrayList<>();
-        Mockito.when(categoryRepository.findAll()).thenReturn(expected);
+        when(categoryRepository.findAll()).thenReturn(expected);
 
         Iterable<Category> result = service.getAllCategories();
         assertEquals(expected, result);
@@ -84,10 +92,19 @@ public class CategoryServiceTests {
     @Test
     public void getCategoryByName_returnsRepositoryResults() {
         Category expected = new Category("foo");
-        Mockito.when(categoryRepository.findByName("foo")).thenReturn(expected);
+        when(categoryRepository.findByName("foo")).thenReturn(expected);
 
         Category result = service.getCategoryByName("foo");
         assertEquals(expected, result);
+    }
+
+    @Test
+    public void getCategoryByName_categryNotFound() {
+        when(categoryRepository.findByName("foo")).thenReturn(null);
+
+        Category result = service.getCategoryByName("foo");
+        assertNotNull(result);
+        assertNotNull(result.getCategoryProducts());
     }
 
     @Test
@@ -116,4 +133,22 @@ public class CategoryServiceTests {
         assertEquals(24, result.getProductId());
     }
 
+    @Test
+    public void addProductToCategory_throwsProductNotFoundException() {
+        when(categoryRepository.existsById(42)).thenReturn(true);
+        when(webServiceHelper.getProductExists(24)).thenReturn(false);
+
+        assertThrows(ProductNotFoundException.class, () -> {
+            service.addProductToCategory(42, 24);
+        });
+    }
+
+    @Test
+    public void addProductToCategory_throwsCategoryNotFoundException() {
+        when(categoryRepository.existsById(42)).thenReturn(false);
+
+        assertThrows(CategoryNotFoundException.class, () -> {
+            service.addProductToCategory(42, 24);
+        });
+    }
 }
